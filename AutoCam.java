@@ -17,13 +17,14 @@ public class AutoCam extends LinearOpMode {
     private OpenCvCamera webcam;
     private Pipeline pipeline;
     Pipeline.Signal snapshotAnalysis = Pipeline.Signal.GREEN;
-
+    
+    
     //motor declarations
     private DcMotor fl;
     private DcMotor fr;
     private DcMotor rl;
     private DcMotor rr;
-
+    
     @Override
     public void runOpMode() {
         //camera initializations
@@ -40,7 +41,7 @@ public class AutoCam extends LinearOpMode {
             @Override
             public void onError(int errorCode) {}
         });
-
+        
         //motor initializations
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -49,27 +50,50 @@ public class AutoCam extends LinearOpMode {
         //setting motor directions
         fl.setDirection(DcMotor.Direction.REVERSE);
         rr.setDirection(DcMotor.Direction.REVERSE);
-
-        while(!isStarted() && !isStopRequested()) {
-            telemetry.addData("Real time analysis: ", pipeline.getAnalysis());
-            telemetry.update();
-            sleep(400);
-        }
-
+        
+        while(!isStarted() && !isStopRequested()) {}
+        
         snapshotAnalysis = pipeline.getAnalysis();
         telemetry.addData("Final analysis: ", snapshotAnalysis);
         telemetry.update();
-
+            
         switch(snapshotAnalysis) {
             case GREEN:
-                //park in space 1
+                fl.setPower(-0.5);
+                rr.setPower(0.5);
+                rl.setPower(-0.5);
+                fr.setPower(0.5);
+                sleep(1325);
+                allPower(fl, fr, rl, rr, 0.5);
+                sleep(1600);
+                allPower(fl, fr, rl, rr, 0);
+                break;
+            case BLACK:
+                fl.setPower(0.5);
+                fr.setPower(0.5);
+                rl.setPower(-0.5);
+                rr.setPower(-0.5);
+                sleep(1600);
+                allPower(fl, fr, rl, rr, 0);
                 break;
             case PURPLE:
-                //park in space 2
-                break;
-            case ORANGE:
-                //park in space 3
+                fl.setPower(0.5);
+                rr.setPower(-0.5);
+                rl.setPower(0.5);
+                fr.setPower(-0.5);
+                sleep(1325);
+                allPower(fl, fr, rl, rr, 0.5);
+                sleep(1600);
+                allPower(fl, fr, rl, rr, 0);
                 break;
         }
+        
+    }
+    
+    private void allPower(DcMotor fl, DcMotor fr, DcMotor rl, DcMotor rr, double p) {
+        fl.setPower(p);
+        fr.setPower(p);
+        rl.setPower(-p);
+        rr.setPower(-p);
     }
 }

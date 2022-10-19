@@ -14,28 +14,33 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class Pipeline extends OpenCvPipeline {
 
     //position enum
-    public enum Signal {
+    public enum Signal
+    {
         GREEN,
-        ORANGE,
+        BLACK,
         PURPLE
     }
 
     //top left point of box
-    //x is measured left to right 0-320, y is measured top to bottom 0-240
-    private static final Point ANCHOR_POINT = new Point(190, 80);
-
+    //x is measured from left 0 to right 320, y is measured from top 0 to bottom 240
+    static final Point ANCHOR_POINT = new Point(190,30);
+    
     //box dimensions
-    private static final int REGION_WIDTH = 30;
-    private static final int REGION_HEIGHT = 30;
-
+    static final int REGION_WIDTH = 30;
+    static final int REGION_HEIGHT = 30;
+    
     //color
-    private final Scalar BLUE = new Scalar(0, 0, 255);
+    public final Scalar BLUE = new Scalar(0, 0, 255);
 
-    //top left & bottom right points
-    private Point pointA = new Point(ANCHOR_POINT.x, ANCHOR_POINT.y);
-    private Point pointB = new Point(ANCHOR_POINT.x + REGION_WIDTH, ANCHOR_POINT.y + REGION_HEIGHT);
+    //top left and bottom right points
+    Point pointA = new Point(
+            ANCHOR_POINT.x,
+            ANCHOR_POINT.y);
+    Point pointB = new Point(
+            ANCHOR_POINT.x + REGION_WIDTH,
+            ANCHOR_POINT.y + REGION_HEIGHT);
 
-    //image objects & average ints
+    //image objects and average ints
     Mat region_Cb;
     Mat YCrCb = new Mat();
     Mat Cb = new Mat();
@@ -44,7 +49,7 @@ public class Pipeline extends OpenCvPipeline {
     //position variable
     private volatile Signal sig = Signal.GREEN;
 
-    //telemetry for EOCVSim
+    //telemetry, allows telemetry in EOCVSim
     private Telemetry telemetry;
 
     //constructor for telemetry
@@ -52,45 +57,57 @@ public class Pipeline extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
-    //converts RGB to YCrCb, extracts Cb channel to Cb mat
-    private void inputToCb(Mat input) {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCRCB);
+    //converts RGB to YCrCb, extracts the Cb channel to Cb variable
+    void inputToCb(Mat input)
+    {
+        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cb, 2);
     }
 
-    //initializes image
+
+    //initializes the image
     @Override
-    public void init(Mat firstFrame) {
-        //initializes image
+    public void init(Mat firstFrame)
+    {
+        //initializes the image
         inputToCb(firstFrame);
 
-        //subimages of what's inside the box
-        region_Cb = Cb.submat(new Rect(point A, point B));
+        //subimages of what's inside each box
+        region_Cb = Cb.submat(new Rect(pointA, pointB));
     }
+
 
     //image processor
     @Override
-    public Mat processFrame(Mat input) {
+    public Mat processFrame(Mat input)
+    {
         //refreshes new input
         inputToCb(input);
 
-        //sums the box
+        //averages the box
         sum = (int) Core.sumElems(region_Cb).val[0];
 
-        //draws rectangle for box
+        //draws rectangle for each box
+        //region 1
         Imgproc.rectangle(
                 input, //image to draw on
-                pointA, //top left of box
-                pointB, //bottom right of box
-                BLUE, //rectangle color,
+                pointA, //top left of the box
+                pointB, //bottom right of the box
+                BLUE, //rectangle color
                 2); //thickness of rectangle
 
+
         //sets sig to whichever side of cone is used
-        if (sum > 90000 && sum < 102000) {
-            sig = Signal.ORANGE;
-        } else if (sum >= 102000 && sum <= 115000) {
+        if(sum < 105000)
+        {
             sig = Signal.GREEN;
-        } else if (sum > 115000) {
+        }
+        else if(sum >= 105000 && sum <= 120000)
+        {
+            sig = Signal.BLACK;
+        }
+        else if(sum > 100000)
+        {
             sig = Signal.PURPLE;
         }
 
@@ -98,11 +115,13 @@ public class Pipeline extends OpenCvPipeline {
         telemetry.addData("sum", sum);
         telemetry.update();
 
-        //sends image to EOCVSim
+        //sends the image to EOCVsim
         return input;
     }
 
-    public Signal getAnalysis() {
+    //function called in opmode to get the position
+    public Signal getAnalysis()
+    {
         return sig;
     }
 }
