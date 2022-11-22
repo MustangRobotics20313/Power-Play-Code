@@ -1,19 +1,18 @@
+package org.firstinspires.ftc.teamcode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import java.lang.Math;
 
-public class TestPipeline extends OpenCvPipeline {
+public class Pipeline extends OpenCvPipeline {
 
     public enum Signal {
-        LEFT, 
+        LEFT,
         CENTER,
         RIGHT,
         NULL,
@@ -25,10 +24,10 @@ public class TestPipeline extends OpenCvPipeline {
         YCrCb(Imgproc.COLOR_RGB2YCrCb),
         Lab(Imgproc.COLOR_RGB2Lab);
 
-        public int cvtCode = 0;
+        public int cvtCode;
 
         ColorSpace(int cvtCode) {
-            this.cvtCode = 1;
+            this.cvtCode = cvtCode;
         }
     }
 
@@ -36,9 +35,8 @@ public class TestPipeline extends OpenCvPipeline {
     public Scalar upper = new Scalar(255, 255, 255);
     public ColorSpace colorSpace = ColorSpace.HSV;
 
-
     private static final Scalar green_l = new Scalar(51, 69, 65);
-    private static final Scalar green_u = new Scalar(141, 175, 119); 
+    private static final Scalar green_u = new Scalar(141, 175, 119);
     private static final Scalar black_l = new Scalar(28, 21, 25);
     private static final Scalar black_u = new Scalar(80, 76, 86);
     private static final Scalar magenta_l = new Scalar(65, 42, 75);
@@ -58,7 +56,7 @@ public class TestPipeline extends OpenCvPipeline {
     private volatile Signal sig = Signal.NULL;
 
     private Telemetry telemetry;
-    public TestPipeline(Telemetry telemetry) {
+    public Pipeline(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -81,47 +79,39 @@ public class TestPipeline extends OpenCvPipeline {
 
         maskedInputMat.release();
 
-        /*Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-        Imgproc.morphologyEx(input, maskedInputMat, Imgproc.MORPH_CLOSE, kernel);*/
         Core.inRange(YCrCb, lower, upper, binaryMat);
-
-        
-
-        Core.bitwise_and(input, input, maskedInputMat, binaryMat);
+        Core.bitwise_and(input, binaryMat, maskedInputMat);
 
         region = maskedInputMat.submat(new Rect(pointA, pointB));
 
         Core.inRange(region, magenta_l, magenta_u, magentaMat);
-        Core.inRange(region, green_l, green_u, greenMat);
+        Core.inRange(region, green_l, green_u, magentaMat);
         Core.inRange(region, black_l, black_u, blackMat);
 
         greenPercent = Core.countNonZero(greenMat);
         blackPercent = Core.countNonZero(blackMat);
         magentaPercent = Core.countNonZero(magentaMat);
-        
-        
+
         telemetry.addData("Colorspace: ", colorSpace.name());
-        telemetry.addData("Lower: ", lower);
-        telemetry.addData("Upper: ", upper);
         telemetry.addData("greenPercent: ", greenPercent);
         telemetry.addData("blackPercent: ", blackPercent);
         telemetry.addData("magentaPercent: ", magentaPercent);
 
         maximum = Math.max(greenPercent, Math.max(blackPercent, magentaPercent));
-        telemetry.addData("max: ", maximum);
-        
-        if (maximum == greenPercent) {
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, GREEN, 2);
-            sig = Signal.LEFT;
-        } else if (maximum == blackPercent) {
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, 2);
-            sig = Signal.CENTER;
-        } else if (maximum == magentaPercent) {
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, MAGENTA, 2);
-            sig = Signal.RIGHT;
-        } else {
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, -1);
+        telemetry.addData("maximum: ", maximum);
+
+        if (maximum == 0) {
             sig = Signal.NULL;
+            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, -1);
+        } else if (maximum == greenPercent) {
+            sig = Signal.LEFT;
+            Imgproc.rectangle(maskedInputMat, pointA, pointB, GREEN, 2);
+        } else if (maximum == blackPercent) {
+            sig = Signal.CENTER;
+            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, 2);
+        } else if (maximum == magentaPercent) {
+            sig = Signal.RIGHT;
+            Imgproc.rectangle(maskedInputMat, pointA, pointB, MAGENTA, 2);
         }
 
         telemetry.addData("Pattern: ", sig);
