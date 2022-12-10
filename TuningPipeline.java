@@ -37,7 +37,7 @@ public class TuningPipeline extends OpenCvPipeline {
         ColorSpace(int cvtCode) {this.cvtCode = cvtCode;}
     }
     //initializes the type of colorspace
-    public static ColorSpace colorSpace = ColorSpace.HSV;
+    public static ColorSpace colorSpace = ColorSpace.YCrCb;
 
     //upper and lower scalars
     private static Scalar upper;
@@ -51,25 +51,27 @@ public class TuningPipeline extends OpenCvPipeline {
     public static int l2 = 0;
     public static int l3 = 0;
 
+    //color boundary Scalars
+    private static Scalar magenta_l = new Scalar(110, 110, 110);
+    private static Scalar magenta_u = new Scalar(145, 170, 155);
+    private static Scalar green_l = new Scalar(130, 70, 70);
+    private static Scalar green_u = new Scalar(220, 140, 170);
+    private static Scalar black_l = new Scalar(0, 125, 100);
+    private static Scalar black_u = new Scalar(100, 130, 130);
+
     //dimension of region
-    public static int REGION_WIDTH = 100;
+    public static int REGION_WIDTH = 20;
 
     //points for rectangle
     private static Point anchor;
     private static Point pointB;
-    public static int p1x = 0;
-    public static int p1y = 0;
+    public static int p1x = 235;
+    public static int p1y = 70;
 
     //color constants
     private static final Scalar GREEN = new Scalar(0, 255, 0);
     private static final Scalar BLACK = new Scalar(0, 0, 0);
     private static final Scalar MAGENTA = new Scalar(255, 0, 255);
-
-    //percentage declarations
-    private double greenPercent;
-    private double blackPercent;
-    private double magentaPercent;
-    private double maximum;
 
     //mat declarations
     private Mat binaryMat = new Mat();
@@ -86,6 +88,7 @@ public class TuningPipeline extends OpenCvPipeline {
 
     //channel switcher
     public static int channelSwitch;
+    public static int thresholdSwitch;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -102,11 +105,40 @@ public class TuningPipeline extends OpenCvPipeline {
 
         region = input.submat(new Rect(anchor, pointB));
 
-        Core.inRange(region, lower, upper, magentaMat);
-        Core.inRange(region, lower, upper, greenMat);
-        Core.inRange(region, lower, upper, blackMat);
+        switch(thresholdSwitch) {
+            case 0:
+                Core.inRange(region, magenta_l, magenta_u, magentaMat);
+                Core.inRange(region, green_l, green_u, greenMat);
+                Core.inRange(region, black_l, black_u, blackMat);
+                break;
+            case 1:
+                Core.inRange(region, lower, upper, magentaMat);
+                Core.inRange(region, lower, upper, greenMat);
+                Core.inRange(region, lower, upper, blackMat);
+                break;
+        }
 
+        if (Math.max(Core.countNonZero(greenMat), Math.max(Core.countNonZero(blackMat),
+                Core.countNonZero(magentaMat))) == Core.countNonZero(greenMat)) {
+            sig = TuningPipeline.Signal.LEFT;
+            Imgproc.rectangle(input, anchor, pointB, GREEN);
+        } else if (Math.max(Core.countNonZero(greenMat), Math.max(Core.countNonZero(blackMat),
+                Core.countNonZero(magentaMat))) == Core.countNonZero(blackMat)) {
+            sig = TuningPipeline.Signal.CENTER;
+            Imgproc.rectangle(input, anchor, pointB, BLACK);
+        } else if (Math.max(Core.countNonZero(greenMat), Math.max(Core.countNonZero(blackMat),
+                Core.countNonZero(magentaMat))) == Core.countNonZero(magentaMat)) {
+            sig = TuningPipeline.Signal.RIGHT;
+            Imgproc.rectangle(input, anchor, pointB, MAGENTA);
+        }
 
+        telemetry.addData("black count: ", Core.countNonZero(blackMat));
+        telemetry.addData("magenta count: ", Core.countNonZero(magentaMat));
+        telemetry.addData("green count: ", Core.countNonZero(greenMat));
+        telemetry.update();
+
+        Imgproc.rectangle(input, anchor, pointB, BLACK, 2);
+        Imgproc.rectangle(maskedInputMat, anchor, pointB, BLACK, 2);
 
         switch(channelSwitch) {
             case 1:
@@ -161,5 +193,9 @@ public class TuningPipeline extends OpenCvPipeline {
                 binaryMat.release();
                 return input;
         }
+    }
+
+    public Signal getAnalysis() {
+        return sig;
     }
 }

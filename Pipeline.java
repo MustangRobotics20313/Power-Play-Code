@@ -33,14 +33,14 @@ public class Pipeline extends OpenCvPipeline {
 
     public Scalar lower = new Scalar(0, 0, 0);
     public Scalar upper = new Scalar(255, 255, 255);
-    public ColorSpace colorSpace = ColorSpace.HSV;
+    public ColorSpace colorSpace = ColorSpace.YCrCb;
 
-    private static final Scalar green_l = new Scalar(51, 69, 65);
-    private static final Scalar green_u = new Scalar(141, 175, 119);
-    private static final Scalar black_l = new Scalar(28, 21, 25);
-    private static final Scalar black_u = new Scalar(80, 76, 86);
-    private static final Scalar magenta_l = new Scalar(65, 42, 75);
-    private static final Scalar magenta_u = new Scalar(175, 117, 154);
+    private static Scalar magenta_l = new Scalar(110, 110, 110);
+    private static Scalar magenta_u = new Scalar(145, 170, 155);
+    private static Scalar green_l = new Scalar(155, 80, 80);
+    private static Scalar green_u = new Scalar(200, 135, 160);
+    private static Scalar black_l = new Scalar(0, 125, 100);
+    private static Scalar black_u = new Scalar(100, 130, 130);
 
     public static final int REGION_WIDTH = 20;
     public static final int REGION_HEIGHT = 20;
@@ -56,13 +56,10 @@ public class Pipeline extends OpenCvPipeline {
     private volatile Signal sig = Signal.NULL;
 
     private Telemetry telemetry;
-    public Pipeline(Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public Pipeline(Telemetry t) {
+        telemetry = t;
     }
 
-    private Mat YCrCb = new Mat();
-    private Mat binaryMat = new Mat();
-    private Mat maskedInputMat = new Mat();
     private Mat greenMat = new Mat();
     private Mat blackMat = new Mat();
     private Mat magentaMat = new Mat();
@@ -75,50 +72,37 @@ public class Pipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, YCrCb, colorSpace.cvtCode);
+        Imgproc.cvtColor(input, input, colorSpace.cvtCode);
 
-        maskedInputMat.release();
-
-        Core.inRange(YCrCb, lower, upper, binaryMat);
-        Core.bitwise_and(input, binaryMat, maskedInputMat);
-
-        region = maskedInputMat.submat(new Rect(pointA, pointB));
+        region = input.submat(new Rect(pointA, pointB));
 
         Core.inRange(region, magenta_l, magenta_u, magentaMat);
-        Core.inRange(region, green_l, green_u, magentaMat);
+        Core.inRange(region, green_l, green_u, greenMat);
         Core.inRange(region, black_l, black_u, blackMat);
 
         greenPercent = Core.countNonZero(greenMat);
         blackPercent = Core.countNonZero(blackMat);
         magentaPercent = Core.countNonZero(magentaMat);
 
-        telemetry.addData("Colorspace: ", colorSpace.name());
-        telemetry.addData("greenPercent: ", greenPercent);
-        telemetry.addData("blackPercent: ", blackPercent);
-        telemetry.addData("magentaPercent: ", magentaPercent);
-
         maximum = Math.max(greenPercent, Math.max(blackPercent, magentaPercent));
-        telemetry.addData("maximum: ", maximum);
 
-        if (maximum == 0) {
-            sig = Signal.NULL;
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, -1);
-        } else if (maximum == greenPercent) {
+        if (maximum == greenPercent) {
             sig = Signal.LEFT;
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, GREEN, 2);
+            Imgproc.rectangle(input, pointA, pointB, GREEN);
         } else if (maximum == blackPercent) {
             sig = Signal.CENTER;
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, BLACK, 2);
+            Imgproc.rectangle(input, pointA, pointB, BLACK);
         } else if (maximum == magentaPercent) {
             sig = Signal.RIGHT;
-            Imgproc.rectangle(maskedInputMat, pointA, pointB, MAGENTA, 2);
+            Imgproc.rectangle(input, pointA, pointB, MAGENTA);
         }
 
-        telemetry.addData("Pattern: ", sig);
-
+        telemetry.addData("greenPercent: ", Core.countNonZero(greenMat));
+        telemetry.addData("blackPercent: ", Core.countNonZero(blackMat));
+        telemetry.addData("magentaPercent: ", Core.countNonZero(magentaMat));
         telemetry.update();
 
-        return maskedInputMat;
+        return input;
     }
 
     public Signal getAnalysis() {
