@@ -11,7 +11,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
 
 @Autonomous
-public class AutonomousCamera extends LinearOpMode {
+public class OldChassis extends LinearOpMode {
     //camera declarations
     private OpenCvCamera webcam;
     private TuningPipeline pipeline;
