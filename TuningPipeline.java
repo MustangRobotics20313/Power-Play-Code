@@ -52,12 +52,12 @@ public class TuningPipeline extends OpenCvPipeline {
     public static int l3 = 0;
 
     //color boundary Scalars
-    private static Scalar magenta_l = new Scalar(70, 100, 100);
+    private static Scalar magenta_l = new Scalar(100, 100, 100);
     private static Scalar magenta_u = new Scalar(150, 180, 165);
     private static Scalar green_l = new Scalar(100, 70, 70);
     private static Scalar green_u = new Scalar(250, 150, 180);
-    private static Scalar black_l = new Scalar(0, 125, 100);
-    private static Scalar black_u = new Scalar(100, 130, 130);
+    private static Scalar black_l = new Scalar(50, 125, 120);
+    private static Scalar black_u = new Scalar(150, 130, 130);
 
     //dimension of region
     public static int REGION_WIDTH = 20;
@@ -80,6 +80,7 @@ public class TuningPipeline extends OpenCvPipeline {
     private Mat blackMat = new Mat();
     private Mat magentaMat = new Mat();
     private Mat region = new Mat();
+    private Mat regionMat = new Mat();
 
     private Telemetry telemetry;
 
@@ -88,7 +89,7 @@ public class TuningPipeline extends OpenCvPipeline {
 
     //channel switcher
     public static int channelSwitch;
-    public static int thresholdSwitch;
+    public static int regionThresholdSwitch;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -105,7 +106,7 @@ public class TuningPipeline extends OpenCvPipeline {
 
         region = input.submat(new Rect(anchor, pointB));
 
-        switch(thresholdSwitch) {
+        switch(regionThresholdSwitch) {
             case 0:
                 Core.inRange(region, magenta_l, magenta_u, magentaMat);
                 Core.inRange(region, green_l, green_u, greenMat);
