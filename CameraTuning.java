@@ -10,11 +10,13 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Autonomous
 public class CameraTuning extends LinearOpMode {
     private OpenCvCamera webcam;
     private TuningPipeline pipe;
 
+    @SuppressWarnings("StatementWithEmptyBody")
     public void runOpMode() {
         //creates a pointer to the FTC dashboard instance
         FtcDashboard dashboard = FtcDashboard.getInstance();

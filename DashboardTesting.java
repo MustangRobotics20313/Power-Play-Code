@@ -9,9 +9,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal", "CatchMayIgnoreException", "SpellCheckingInspection"})
 @Autonomous
 public class DashboardTesting extends LinearOpMode {
 
+    @SuppressWarnings("SameParameterValue")
     private static void logGamepad(Telemetry telemetry, Gamepad gamepad, String prefix) {
         telemetry.addData(prefix + "Synthetic", gamepad.getGamepadId() == Gamepad.ID_UNASSOCIATED);
         for(Field field : gamepad.getClass().getFields()) {

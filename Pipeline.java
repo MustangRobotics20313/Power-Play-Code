@@ -9,6 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal", "FieldMayBeFinal"})
 public class Pipeline extends OpenCvPipeline {
 
     public enum Signal {
@@ -24,6 +25,7 @@ public class Pipeline extends OpenCvPipeline {
         YCrCb(Imgproc.COLOR_RGB2YCrCb),
         Lab(Imgproc.COLOR_RGB2Lab);
 
+        @SuppressWarnings("NonFinalFieldInEnum")
         public int cvtCode;
 
         ColorSpace(int cvtCode) {

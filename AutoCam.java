@@ -12,7 +12,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Autonomous
-public class NewChassis extends LinearOpMode {
+public class AutoCam extends LinearOpMode {
     //camera declarations
     private OpenCvCamera webcam;
     private TuningPipeline pipeline;
@@ -48,8 +48,8 @@ public class NewChassis extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         rl = hardwareMap.get(DcMotor.class, "rl");
         rr = hardwareMap.get(DcMotor.class, "rr");
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        rl.setDirection(DcMotor.Direction.REVERSE);
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        rr.setDirection(DcMotor.Direction.REVERSE);
 
         while(!isStarted() && !isStopRequested()) {
             telemetry.addData("Analysis: ", pipeline.getAnalysis());
@@ -63,32 +63,35 @@ public class NewChassis extends LinearOpMode {
 
         switch(sig) {
             case LEFT:
-                allPower(-0.7);
-                sleep(1000);
-                fl.setPower(-1);
-                rr.setPower(1);
-                rl.setPower(-1);
-                fr.setPower(-1);
-                sleep(1500);
+                //code to strafe right
+                fl.setPower(0.5);
+                fr.setPower(-0.5);
+                rl.setPower(0.5);
+                rr.setPower(-0.5);
+                sleep(1650);
+                allPower(-0.5);
+                sleep(1600);
                 allPower(0);
                 break;
             case CENTER:
+                fl.setPower(0.5);
+                fr.setPower(-0.5);
+                rl.setPower(0.5);
+                rr.setPower(-0.5);
+                sleep(300);
                 allPower(-0.5);
-                sleep(50);
-                fl.setPower(-1);
-                rr.setPower(1);
-                rl.setPower(-1);
-                fr.setPower(-1);
-                sleep(1500);
+                sleep(1600);
                 allPower(0);
                 break;
             case RIGHT:
-                allPower(1);
-                sleep(690);
-                fl.setPower(-1);
-                rr.setPower(-1);
-                rl.setPower(-1);
-                fr.setPower(-1);
+                //code to strafe left
+                fl.setPower(-0.5);
+                rr.setPower(0.5);
+                rl.setPower(-0.5);
+                fr.setPower(0.5);
+
+                sleep(1500);
+                allPower(-0.5);
                 sleep(1600);
                 allPower(0);
                 break;
@@ -97,9 +100,8 @@ public class NewChassis extends LinearOpMode {
 
     private void allPower(double power) {
         fl.setPower(power);
-        fr.setPower(-power);
+        fr.setPower(power);
         rl.setPower(-power);
         rr.setPower(-power);
     }
-
 }

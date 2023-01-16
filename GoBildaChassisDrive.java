@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Config
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 @TeleOp
 public class GoBildaChassisDrive extends LinearOpMode {
 
@@ -16,8 +15,6 @@ public class GoBildaChassisDrive extends LinearOpMode {
     private DcMotor rr;
     private DcMotor slide;
     private Servo grabber;
-
-    public static int drivingSwitch;
 
     @Override
     public void runOpMode() {

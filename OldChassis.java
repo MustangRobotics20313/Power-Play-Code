@@ -10,6 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Autonomous
 public class OldChassis extends LinearOpMode {
     //camera declarations

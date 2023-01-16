@@ -11,6 +11,7 @@ import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal", "FieldMayBeFinal"})
 @Config
 public class TuningPipeline extends OpenCvPipeline {
 
@@ -33,6 +34,7 @@ public class TuningPipeline extends OpenCvPipeline {
         YCrCb(Imgproc.COLOR_RGB2YCrCb),
         Lab(Imgproc.COLOR_RGB2Lab);
 
+        @SuppressWarnings("NonFinalFieldInEnum")
         public int cvtCode;
         ColorSpace(int cvtCode) {this.cvtCode = cvtCode;}
     }
