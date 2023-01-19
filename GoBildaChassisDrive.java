@@ -47,10 +47,18 @@ public class GoBildaChassisDrive extends LinearOpMode {
             rl.setPower(gamepad1.right_stick_x);
             rr.setPower(-gamepad1.right_stick_x);
 
-            if (gamepad1.a) {
-                slide.setPower(0.5);
+            if (gamepad1.left_bumper) {
+                slide.setPower(0.7);
+            } else if (gamepad1.right_bumper) {
+                slide.setPower(-0.2);
             } else {
                 slide.setPower(0);
+            }
+
+            if (gamepad1.left_trigger > 0) {
+                grabber.setPosition(0);
+            } else if (gamepad1.right_trigger > 0) {
+                grabber.setPosition(0.5);
             }
 
             telemetry.update();

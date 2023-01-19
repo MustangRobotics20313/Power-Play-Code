@@ -54,10 +54,10 @@ public class TuningPipeline extends OpenCvPipeline {
     public static int l3 = 0;
 
     //color boundary Scalars
-    private static Scalar magenta_l = new Scalar(100, 100, 100);
-    private static Scalar magenta_u = new Scalar(150, 180, 165);
+    private static Scalar magenta_l = new Scalar(125, 125, 125);
+    private static Scalar magenta_u = new Scalar(168, 168, 168);
     private static Scalar green_l = new Scalar(100, 70, 70);
-    private static Scalar green_u = new Scalar(250, 150, 180);
+    private static Scalar green_u = new Scalar(200, 130, 130);
     private static Scalar black_l = new Scalar(50, 125, 120);
     private static Scalar black_u = new Scalar(150, 130, 130);
 
@@ -67,8 +67,8 @@ public class TuningPipeline extends OpenCvPipeline {
     //points for rectangle
     private static Point anchor;
     private static Point pointB;
-    public static int p1x = 145;
-    public static int p1y = 75;
+    public static int p1x = 65;
+    public static int p1y = 125;
 
     //color constants
     private static final Scalar GREEN = new Scalar(0, 255, 0);

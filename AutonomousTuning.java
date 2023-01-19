@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -29,9 +30,9 @@ public class AutonomousTuning extends LinearOpMode {
 
     //tuning variables
     public static int strafingTime;
-    public static int strafingPower;
+    public static double strafingPower;
     public static int forwardTime;
-    public static int forwardPower;
+    public static double forwardPower;
     public static int goForward;
 
     public void runOpMode() {
@@ -40,12 +41,14 @@ public class AutonomousTuning extends LinearOpMode {
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "webcam");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new TuningPipeline(telemetry);
         webcam.setPipeline(pipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                dashboard.startCameraStream(webcam, 0);
             }
             @Override
             public void onError(int errorCode) {}
@@ -59,7 +62,6 @@ public class AutonomousTuning extends LinearOpMode {
         grabber = hardwareMap.get(Servo.class, "grabber");
 
         grabber.scaleRange(0, 1);
-        rr.setDirection(DcMotor.Direction.REVERSE);
 
         while(!isStarted() && !isStopRequested()) {
             telemetry.addData("Analysis: ", pipeline.getAnalysis());

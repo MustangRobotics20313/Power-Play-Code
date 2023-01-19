@@ -9,6 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Autonomous
@@ -22,6 +23,8 @@ public class AutoCam extends LinearOpMode {
     private DcMotor fr;
     private DcMotor rl;
     private DcMotor rr;
+    private DcMotor slide;
+    private Servo grabber;
 
     @Override
     public void runOpMode() {
@@ -48,7 +51,16 @@ public class AutoCam extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         rl = hardwareMap.get(DcMotor.class, "rl");
         rr = hardwareMap.get(DcMotor.class, "rr");
-        fl.setDirection(DcMotor.Direction.REVERSE);
+        slide = hardwareMap.get(DcMotor.class, "slide");
+        grabber = hardwareMap.get(Servo.class, "grabber");
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //used to reset encoder position, sets embedded encoder to 0
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); //depends on motor, some motors have different #s of ticks; check manual
+        //slide.setTargetPosition(target position);
+        //use limit switch to reset encoders when at a specific position
+
+        //set custom extend and retract speeds
+
+
         rr.setDirection(DcMotor.Direction.REVERSE);
 
         while(!isStarted() && !isStopRequested()) {
@@ -64,35 +76,35 @@ public class AutoCam extends LinearOpMode {
         switch(sig) {
             case LEFT:
                 //code to strafe right
-                fl.setPower(0.5);
-                fr.setPower(-0.5);
+                fl.setPower(-0.5);
+                fr.setPower(0.5);
                 rl.setPower(0.5);
                 rr.setPower(-0.5);
-                sleep(1650);
-                allPower(-0.5);
+                sleep(1450);
+                allPower(0.5);
                 sleep(1600);
                 allPower(0);
                 break;
             case CENTER:
-                fl.setPower(0.5);
-                fr.setPower(-0.5);
+                fl.setPower(-0.5);
+                fr.setPower(0.5);
                 rl.setPower(0.5);
                 rr.setPower(-0.5);
                 sleep(300);
-                allPower(-0.5);
+                allPower(0.5);
                 sleep(1600);
                 allPower(0);
                 break;
             case RIGHT:
                 //code to strafe left
-                fl.setPower(-0.5);
+                fl.setPower(0.5);
                 rr.setPower(0.5);
                 rl.setPower(-0.5);
-                fr.setPower(0.5);
+                fr.setPower(-0.5);
 
-                sleep(1500);
-                allPower(-0.5);
-                sleep(1600);
+                sleep(980);
+                allPower(0.5);
+                sleep(1200);
                 allPower(0);
                 break;
         }
@@ -101,7 +113,7 @@ public class AutoCam extends LinearOpMode {
     private void allPower(double power) {
         fl.setPower(power);
         fr.setPower(power);
-        rl.setPower(-power);
-        rr.setPower(-power);
+        rl.setPower(power);
+        rr.setPower(power);
     }
 }
