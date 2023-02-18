@@ -47,23 +47,16 @@ public class AutoCam extends LinearOpMode {
             public void onError(int errorCode) {}
         });
 
-        //motor initializations
+        //actuator initializations
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         rl = hardwareMap.get(DcMotor.class, "rl");
         rr = hardwareMap.get(DcMotor.class, "rr");
         slide = hardwareMap.get(DcMotor.class, "slide");
         grabber = hardwareMap.get(Servo.class, "grabber");
-        //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //used to reset encoder position, sets embedded encoder to 0
-        //slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); //depends on motor, some motors have different #s of ticks; check manual
-        //slide.setTargetPosition(target position);
-        //use limit switch to reset encoders when at a specific position
 
-        //set custom extend and retract speeds
-
-
+        //actuator configuration
         rr.setDirection(DcMotor.Direction.REVERSE);
-
         grabber.scaleRange(0, 1);
 
         while(!isStarted() && !isStopRequested()) {
@@ -84,9 +77,9 @@ public class AutoCam extends LinearOpMode {
                 fr.setPower(0.5);
                 rl.setPower(0.5);
                 rr.setPower(-0.5);
-                sleep(1450);
+                sleep(1425);
                 allPower(0.5);
-                sleep(1600);
+                sleep(1300);
                 allPower(0);
                 break;
             case CENTER:
@@ -96,7 +89,7 @@ public class AutoCam extends LinearOpMode {
                 rr.setPower(-0.5);
                 sleep(300);
                 allPower(0.5);
-                sleep(1600);
+                sleep(1300);
                 allPower(0);
                 break;
             case RIGHT:
@@ -106,7 +99,7 @@ public class AutoCam extends LinearOpMode {
                 rl.setPower(-0.5);
                 fr.setPower(-0.5);
 
-                sleep(980);
+                sleep(1250);
                 allPower(0.5);
                 sleep(1200);
                 allPower(0);
