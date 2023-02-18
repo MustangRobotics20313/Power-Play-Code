@@ -1,55 +1,44 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import java.util.ArrayList;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
+@Config
 @Autonomous
-public class AprilTagDetection extends LinearOpMode
-{
-    //camera detections
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+public class AutonomousTuning extends LinearOpMode {
+    //camera declarations
+    private OpenCvCamera camera;
+    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     //actuator declarations
-    /*private DcMotor fl;
+    private DcMotor fl;
     private DcMotor fr;
     private DcMotor rl;
     private DcMotor rr;
     private DcMotor slide;
-    private Servo grabber;*/
+    private Servo grabber;
 
+    public static int strafingTime;
+    public static double strafingPower;
+    public static double forwardPower;
+    public static int forwardTime;
+    public static int goForward;
 
-    static final double FEET_PER_METER = 3.28084;
+    private static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -68,7 +57,8 @@ public class AprilTagDetection extends LinearOpMode
     int MIDDLE = 2;
     int RIGHT = 3;
 
-    org.openftc.apriltag.AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterest = null;
+
 
     @Override
     public void runOpMode()
@@ -94,25 +84,23 @@ public class AprilTagDetection extends LinearOpMode
             public void onError(int errorCode) {}
         });
 
-        telemetry.setMsTransmissionInterval(50);
+        telemetry.setMsTransmissionInterval(75);
 
-        /*fl = hardwareMap.get(DcMotor.class, "fl");
+        fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         rl = hardwareMap.get(DcMotor.class, "rl");
         rr = hardwareMap.get(DcMotor.class, "rr");
         slide = hardwareMap.get(DcMotor.class, "slide");
         grabber = hardwareMap.get(Servo.class, "grabber");
-        //insert any motor reverses
 
-        grabber.scaleRange(0, 1);*/
+        fr.setDirection(DcMotor.Direction.REVERSE);
+        rr.setDirection(DcMotor.Direction.REVERSE);
+        slide.setDirection(DcMotor.Direction.REVERSE);
+        grabber.scaleRange(0, 1);
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
         while (!isStarted() && !isStopRequested())
         {
-            ArrayList<org.openftc.apriltag.AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
@@ -186,15 +174,45 @@ public class AprilTagDetection extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
-        /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            parkLeft();
+            //fl & rr positive, fr & rl negative
+            fl.setPower(-strafingPower);
+            fr.setPower(-strafingPower);
+            rl.setPower(strafingPower);
+            rr.setPower(strafingPower);
+            sleep(strafingTime);
+
+            if (goForward != 0) {
+                allPower(-forwardPower);
+                sleep(forwardTime);
+            }
+
+            allPower(0);
         } else if (tagOfInterest.id == MIDDLE) {
-            parkMiddle();
+            allPower(forwardPower);
+            sleep(forwardTime);
+            allPower(0);
         } else {
-            parkRight();
+            fl.setPower(strafingPower);
+            fr.setPower(strafingPower);
+            rl.setPower(-strafingPower);
+            rr.setPower(-strafingPower);
+            sleep(strafingTime);
+
+            if (goForward != 0) {
+                allPower(forwardPower);
+                sleep(forwardTime);
+            }
+
+            allPower(0);
         }
+    }
+
+    private void allPower(double power) {
+        fl.setPower(power);
+        fr.setPower(power);
+        rl.setPower(power);
+        rr.setPower(power);
     }
 
     void tagToTelemetry(org.openftc.apriltag.AprilTagDetection detection)
@@ -206,21 +224,5 @@ public class AprilTagDetection extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
-
-    private void parkLeft() {
-
-    }
-
-    private void parkMiddle() {
-
-    }
-
-    private void parkRight() {
-
-    }
-
-    private void allPower() {
-
     }
 }
