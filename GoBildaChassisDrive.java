@@ -71,86 +71,36 @@ public class GoBildaChassisDrive extends LinearOpMode {
             rl.setPower(gamepad1.right_stick_x);
             rr.setPower(gamepad1.right_stick_x);
 
-
-            if (gamepad1.left_bumper) { //full extension
-                slide.setTargetPosition(HIGH_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slide.setPower(SLIDE_POWER);
-            } else if (gamepad1.right_bumper) { //full retraction
-                slide.setTargetPosition(RETRACTED_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slide.setPower(-SLIDE_POWER);
-            } else if (gamepad1.left_trigger > 0) { //manual control
-                slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                slide.setPower(SLIDE_POWER);
-            } else if (gamepad1.right_trigger > 0) { //manual control
-                slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                slide.setPower(-SLIDE_POWER);
-            } else if (gamepad1.a) { //extend to low junction
-                slide.setTargetPosition(LOW_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > LOW_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
+            //diagonal strafing
+            if (gamepad1.left_stick_y > 0) {
+                if (gamepad1.right_stick_x < 0) {
+                    fl.setPower(0);
+                    fr.setPower(gamepad1.right_stick_x);
+                    rl.setPower(gamepad1.right_stick_x);
+                    rr.setPower(0);
+                } else if (gamepad1.right_stick_x > 0) {
+                    fl.setPower(gamepad1.right_stick_x);
+                    fr.setPower(0);
+                    rl.setPower(0);
+                    rr.setPower(gamepad1.right_stick_x);
                 }
-            } else if (gamepad1.b) { //extend to medium junction
-                slide.setTargetPosition(MIDDLE_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > MIDDLE_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
-                }
-            } else if (gamepad2.a) {
-                slide.setTargetPosition(STACK_FIVE_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > STACK_FIVE_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
-                }
-            } else if (gamepad2.b) {
-                slide.setTargetPosition(STACK_FOUR_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > STACK_FOUR_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
-                }
-            } else if (gamepad2.x) {
-                slide.setTargetPosition(STACK_THREE_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > STACK_THREE_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
-                }
-            } else if (gamepad2.y) {
-                slide.setTargetPosition(STACK_TWO_POSITION);
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (slide.getCurrentPosition() > STACK_TWO_POSITION) {
-                    slide.setPower(-SLIDE_POWER);
-                } else {
-                    slide.setPower(SLIDE_POWER);
+            } else if (gamepad1.right_stick_y < 0) {
+                if (gamepad1.right_stick_x < 0) {
+                    fl.setPower(0);
+                    fr.setPower(-gamepad1.right_stick_x);
+                    rl.setPower(-gamepad1.right_stick_x);
+                    rr.setPower(0);
+                } else if (gamepad1.right_stick_x > 0) {
+                    fl.setPower(-gamepad1.right_stick_x);
+                    fr.setPower(0);
+                    rl.setPower(0);
+                    rr.setPower(-gamepad1.right_stick_x);
                 }
             }
 
-            if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0 && slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
-                slide.setPower(0);
-            }
+            slide();
 
-            if (slideSensor.isPressed()) {
-                slide.setPower(0);
-                slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-
-
-            if (gamepad1.left_stick_button) {
-                grabber.setPosition(0.24);
-            } else if (gamepad1.right_stick_button) {
-                grabber.setPosition(0.45);
-            }
+            grabber();
 
             telemetry.addData("Front left power\t: ", fl.getPower());
             telemetry.addData("Front right power\t: ", fl.getPower());
@@ -160,6 +110,89 @@ public class GoBildaChassisDrive extends LinearOpMode {
             telemetry.addData("Slide position\t: ", slide.getCurrentPosition());
             telemetry.addData("Grabber position: ", grabber.getPosition());
             telemetry.update();
+        }
+    }
+
+    private void slide() {
+        if (gamepad1.left_bumper) { //full extension
+            slide.setTargetPosition(HIGH_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide.setPower(SLIDE_POWER);
+        } else if (gamepad1.right_bumper) { //full retraction
+            slide.setTargetPosition(RETRACTED_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide.setPower(-SLIDE_POWER);
+        } else if (gamepad1.left_trigger > 0) { //manual control
+            slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slide.setPower(SLIDE_POWER);
+        } else if (gamepad1.right_trigger > 0) { //manual control
+            slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slide.setPower(-SLIDE_POWER);
+        } else if (gamepad1.a) { //extend to low junction
+            slide.setTargetPosition(LOW_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > LOW_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        } else if (gamepad1.b) { //extend to medium junction
+            slide.setTargetPosition(MIDDLE_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > MIDDLE_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        } else if (gamepad2.a) {
+            slide.setTargetPosition(STACK_FIVE_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > STACK_FIVE_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        } else if (gamepad2.b) {
+            slide.setTargetPosition(STACK_FOUR_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > STACK_FOUR_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        } else if (gamepad2.x) {
+            slide.setTargetPosition(STACK_THREE_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > STACK_THREE_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        } else if (gamepad2.y) {
+            slide.setTargetPosition(STACK_TWO_POSITION);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (slide.getCurrentPosition() > STACK_TWO_POSITION) {
+                slide.setPower(-SLIDE_POWER);
+            } else {
+                slide.setPower(SLIDE_POWER);
+            }
+        }
+
+        if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0 && slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
+            slide.setPower(0);
+        }
+
+        if (slideSensor.isPressed()) {
+            slide.setPower(0);
+            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
+    private void grabber() {
+        if (gamepad1.left_stick_button) {
+            grabber.setPosition(0.24);
+        } else if (gamepad1.right_stick_button) {
+            grabber.setPosition(0.45);
         }
     }
 }

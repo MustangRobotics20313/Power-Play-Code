@@ -9,49 +9,63 @@ public class MeepMeepU {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
+        final double MAX_VEL = 30;
+        final double MAX_ACC = 40;
+        final double TRACK_WIDTH = 12;
+
+        final double STARTING_X = 31.3;
+        final double STARTING_Y = -64;
+        final double INITIAL_STRAFE = 19;
+        final double WALL_FORWARD = 30;
+        final double ANGLE = 49; //degrees
+        final double CONE_FORWARD = 5;
+
+        final double STRAFE_TO_PARK_MIDDLE = 25;
+        final double STRAFE_TO_PARK_RIGHT = 47;
+
         //parkLeft trajectory
         RoadRunnerBotEntity leftBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(45, 60, Math.toRadians(180), Math.toRadians(180), 12)
-                .setDimensions(14, 14)
+                .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
+                .setDimensions(14, 14) //units in inches
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(28, -62, Math.toRadians(90)))
-                                .strafeLeft(17)
-                                .forward(28)
-                                .turn(Math.toRadians(42))
-                                .forward(3)
-                                .back(3)
-                                .turn(Math.toRadians(-42))
+                        drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
+                                .strafeLeft(INITIAL_STRAFE)
+                                .forward(WALL_FORWARD)
+                                .turn(Math.toRadians(ANGLE))
+                                .forward(CONE_FORWARD)
+                                .back(CONE_FORWARD)
+                                .turn(Math.toRadians(-ANGLE))
                                 .build()
                 );
 
         //parkCenter trajectory
         RoadRunnerBotEntity centerBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(45, 60, Math.toRadians(180), Math.toRadians(180), 12)
+                .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
                 .setDimensions(14, 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(28, -62, Math.toRadians(90)))
-                                .strafeLeft(17)
-                                .forward(28)
-                                .turn(Math.toRadians(45))
-                                .forward(3)
-                                .back(3)
-                                .turn(Math.toRadians(-45))
-                                .strafeRight(25)
+                        drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
+                                .strafeLeft(INITIAL_STRAFE)
+                                .forward(WALL_FORWARD)
+                                .turn(Math.toRadians(ANGLE))
+                                .forward(CONE_FORWARD)
+                                .back(CONE_FORWARD)
+                                .turn(Math.toRadians(-ANGLE))
+                                .strafeRight(STRAFE_TO_PARK_MIDDLE)
                                 .build()
                 );
 
         RoadRunnerBotEntity rightBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(45, 60, Math.toRadians(180), Math.toRadians(180), 12)
+                .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
                 .setDimensions(14, 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(28, -62, Math.toRadians(90)))
-                                .strafeLeft(17)
-                                .forward(28)
-                                .turn(Math.toRadians(45))
-                                .forward(3)
-                                .back(3)
-                                .turn(Math.toRadians(-45))
-                                .strafeRight(47)
+                        drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
+                                .strafeLeft(INITIAL_STRAFE)
+                                .forward(WALL_FORWARD)
+                                .turn(Math.toRadians(ANGLE))
+                                .forward(CONE_FORWARD)
+                                .back(CONE_FORWARD)
+                                .turn(Math.toRadians(-ANGLE))
+                                .strafeRight(STRAFE_TO_PARK_RIGHT)
                                 .build()
                 );
 
