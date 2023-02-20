@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
 @Config
@@ -20,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class IMUTesting extends LinearOpMode {
 
     private IMU imu;
+    private YawPitchRollAngles robotOrientation;
+
 
     @Override
     public void runOpMode() {
@@ -37,7 +40,7 @@ public class IMUTesting extends LinearOpMode {
                     AxesOrder.ZYX,
                     AngleUnit.DEGREES,
                     -90,
-                    45,
+                    -45,
                     0,
                     0
                 )
@@ -46,20 +49,15 @@ public class IMUTesting extends LinearOpMode {
 
         imu.initialize(myImuParameters);
 
-        Orientation robotOrientation = imu.getRobotOrientation(
-                AxesReference.INTRINSIC,
-                AxesOrder.XYZ,
-                AngleUnit.DEGREES
-        );
-
         waitForStart();
         while(opModeIsActive()) {
+            robotOrientation = imu.getRobotYawPitchRollAngles();Z
 
-
+            telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES));
+            telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES));
+            telemetry.addData("Roll\t:", robotOrientation.getRoll(AngleUnit.DEGREES));
 
             telemetry.update();
-
-
             sleep(100);
         }
 
