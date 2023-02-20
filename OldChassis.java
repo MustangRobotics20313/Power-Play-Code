@@ -12,6 +12,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Autonomous
+@Deprecated
 public class OldChassis extends LinearOpMode {
     //camera declarations
     private OpenCvCamera webcam;

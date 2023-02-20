@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal", "CommentedOutCode", "SpellCheckingInspection"})
 @TeleOp
+@Deprecated
 public class Drive extends LinearOpMode {
 
     private DcMotor fl;
