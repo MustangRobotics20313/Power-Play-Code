@@ -21,9 +21,14 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
     //units of ticks
     private final int RETRACTED_POSITION = 0;
-    private final int LOW_POSITION = 1400;
+    private final int LOW_POSITION = 1600;
     private final int MIDDLE_POSITION = 2875;
     private final int HIGH_POSITION = 4000;
+
+    private final int STACK_FIVE_POSITION = 500;
+    private final int STACK_FOUR_POSITION = 390;
+    private final int STACK_THREE_POSITION = 230;
+    private final int STACK_TWO_POSITION = 90;
 
     private final double SLIDE_POWER = 0.9;
 
@@ -97,6 +102,38 @@ public class GoBildaChassisDrive extends LinearOpMode {
                 } else {
                     slide.setPower(SLIDE_POWER);
                 }
+            } else if (gamepad2.a) {
+                slide.setTargetPosition(STACK_FIVE_POSITION);
+                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (slide.getCurrentPosition() > STACK_FIVE_POSITION) {
+                    slide.setPower(-SLIDE_POWER);
+                } else {
+                    slide.setPower(SLIDE_POWER);
+                }
+            } else if (gamepad2.b) {
+                slide.setTargetPosition(STACK_FOUR_POSITION);
+                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (slide.getCurrentPosition() > STACK_FOUR_POSITION) {
+                    slide.setPower(-SLIDE_POWER);
+                } else {
+                    slide.setPower(SLIDE_POWER);
+                }
+            } else if (gamepad2.x) {
+                slide.setTargetPosition(STACK_THREE_POSITION);
+                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (slide.getCurrentPosition() > STACK_THREE_POSITION) {
+                    slide.setPower(-SLIDE_POWER);
+                } else {
+                    slide.setPower(SLIDE_POWER);
+                }
+            } else if (gamepad2.y) {
+                slide.setTargetPosition(STACK_TWO_POSITION);
+                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (slide.getCurrentPosition() > STACK_TWO_POSITION) {
+                    slide.setPower(-SLIDE_POWER);
+                } else {
+                    slide.setPower(SLIDE_POWER);
+                }
             }
 
             if (gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0 && slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
@@ -110,7 +147,7 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
 
             if (gamepad1.left_stick_button) {
-                grabber.setPosition(0);
+                grabber.setPosition(0.24);
             } else if (gamepad1.right_stick_button) {
                 grabber.setPosition(0.45);
             }
