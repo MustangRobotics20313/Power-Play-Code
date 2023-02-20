@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 @Autonomous(name = "Location1")
-
-
-
+@Deprecated
 public class Location1 extends LinearOpMode {
 
     private DcMotor rr;

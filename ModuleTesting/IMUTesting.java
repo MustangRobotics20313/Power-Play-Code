@@ -51,7 +51,7 @@ public class IMUTesting extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
-            robotOrientation = imu.getRobotYawPitchRollAngles();Z
+            robotOrientation = imu.getRobotYawPitchRollAngles();
 
             telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES));
             telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES));

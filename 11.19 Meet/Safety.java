@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 @Autonomous(name = "Safety")
-
-
-
+@Deprecated
 public class Safety extends LinearOpMode {
 
     private DcMotor rr;

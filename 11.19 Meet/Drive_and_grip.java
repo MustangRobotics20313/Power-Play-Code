@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @TeleOp
+@Deprecated
 public class Drive_and_grip extends LinearOpMode {
 
    private DcMotor fl;
