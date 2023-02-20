@@ -4,11 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-<<<<<<< HEAD
-=======
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92eace80e0760aa7b96b71a8c5d2312dc5a8af46
+//>>>>>>> 92eace80e0760aa7b96b71a8c5d2312dc5a8af46
 /*
  * Constants shared between multiple drive types.
  *
