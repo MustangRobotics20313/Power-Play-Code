@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ModuleTesting;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp
 @Config
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
+@TeleOp
 public class IMUTesting extends LinearOpMode {
 
     private IMU imu;
@@ -37,11 +37,11 @@ public class IMUTesting extends LinearOpMode {
             new RevHubOrientationOnRobot (
                     new Orientation(
                     AxesReference.INTRINSIC,
-                    AxesOrder.ZYX,
+                    AxesOrder.XYZ,
                     AngleUnit.DEGREES,
-                    -90,
-                    -45,
                     0,
+                    45,
+                    -90,
                     0
                 )
             )
@@ -53,9 +53,9 @@ public class IMUTesting extends LinearOpMode {
         while(opModeIsActive()) {
             robotOrientation = imu.getRobotYawPitchRollAngles();
 
-            telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES));
-            telemetry.addData("Roll\t:", robotOrientation.getRoll(AngleUnit.DEGREES));
+            telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES)); //vertical axis of robot
+            telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES)); //front-back axis of robot
+            telemetry.addData("Roll\t:", robotOrientation.getRoll(AngleUnit.DEGREES)); // left-right axis of robot
 
             telemetry.update();
             sleep(100);

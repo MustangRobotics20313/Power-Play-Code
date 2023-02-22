@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @TeleOp
@@ -17,7 +25,10 @@ public class GoBildaChassisDrive extends LinearOpMode {
     private DcMotor rr;
     private DcMotorEx slide;
     private Servo grabber;
+
     private TouchSensor slideSensor;
+    private IMU imu;
+    private YawPitchRollAngles robotOrientation;
 
     //units of ticks
     private final int RETRACTED_POSITION = 0;
@@ -42,8 +53,8 @@ public class GoBildaChassisDrive extends LinearOpMode {
         grabber = hardwareMap.get(Servo.class, "grabber");
         slideSensor = hardwareMap.get(TouchSensor.class, "slideSensor");
 
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        rr.setDirection(DcMotor.Direction.REVERSE);
+        //fr.setDirection(DcMotor.Direction.REVERSE);
+        //rr.setDirection(DcMotor.Direction.REVERSE);
         slide.setDirection(DcMotor.Direction.REVERSE);
         grabber.scaleRange(0, 1);
 
@@ -51,9 +62,27 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters myImuParameters = new IMU.Parameters (
+                new RevHubOrientationOnRobot(
+                        new Orientation(
+                                AxesReference.INTRINSIC,
+                                AxesOrder.ZYX,
+                                AngleUnit.DEGREES,
+                                -90,
+                                45,
+                                0,
+                                0
+                        )
+                )
+        );
+
+        imu.initialize(myImuParameters);
+
         waitForStart();
         while(opModeIsActive()) {
-            //left stick: translational motion
+            /*//left stick: translational motion
             fl.setPower(gamepad1.left_stick_y);
             fr.setPower(gamepad1.left_stick_y);
             rl.setPower(gamepad1.left_stick_y);
@@ -96,7 +125,21 @@ public class GoBildaChassisDrive extends LinearOpMode {
                     rl.setPower(0);
                     rr.setPower(-gamepad1.right_stick_x);
                 }
-            }
+            }*/
+
+            double drive = -gamepad1.left_stick_x;
+            double strafe = -gamepad1.right_stick_x;
+            double twist = -gamepad1.left_stick_y;
+
+            double v1 = drive + strafe - twist;
+            double v2 = drive - strafe + twist;
+            double v3 = drive - strafe - twist;
+            double v4 = drive + strafe + twist;
+
+            fl.setPower(v1);
+            fr.setPower(v2);
+            rl.setPower(v3);
+            rr.setPower(v4);
 
             slide();
 
@@ -109,7 +152,18 @@ public class GoBildaChassisDrive extends LinearOpMode {
             telemetry.addData("Slide power\t: ", slide.getPower());
             telemetry.addData("Slide position\t: ", slide.getCurrentPosition());
             telemetry.addData("Grabber position: ", grabber.getPosition());
+
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+
+            telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES));
+            telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES));
+            telemetry.addData("Roll\t:", robotOrientation.getRoll(AngleUnit.DEGREES));
+
             telemetry.update();
+
+            if (gamepad1.options) {
+                imu.resetYaw();
+            }
         }
     }
 
