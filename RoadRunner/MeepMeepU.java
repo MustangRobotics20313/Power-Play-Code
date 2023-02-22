@@ -26,7 +26,7 @@ public class MeepMeepU {
         //parkLeft trajectory
         RoadRunnerBotEntity leftBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
-                .setDimensions(14, 14) //units in inches
+                .setDimensions(14, 16) //units in inches
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
                                 .strafeLeft(INITIAL_STRAFE)
@@ -41,7 +41,7 @@ public class MeepMeepU {
         //parkCenter trajectory
         RoadRunnerBotEntity centerBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
-                .setDimensions(14, 14)
+                .setDimensions(14, 16)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
                                 .strafeLeft(INITIAL_STRAFE)
@@ -56,7 +56,7 @@ public class MeepMeepU {
 
         RoadRunnerBotEntity rightBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(MAX_VEL, MAX_ACC, Math.toRadians(180), Math.toRadians(180), TRACK_WIDTH)
-                .setDimensions(14, 14)
+                .setDimensions(14, 16)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(STARTING_X, STARTING_Y, Math.toRadians(90)))
                                 .strafeLeft(INITIAL_STRAFE)
@@ -70,12 +70,12 @@ public class MeepMeepU {
                 );
 
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_KAI_DARK)
+        /*meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(leftBot)
                 .addEntity(centerBot)
                 .addEntity(rightBot)
-                .start();
+                .start();*/
     }
 }
