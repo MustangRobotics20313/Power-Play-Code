@@ -19,6 +19,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @TeleOp
 public class GoBildaChassisDrive extends LinearOpMode {
 
+    private enum SlideState {
+        RETRACTED,
+        EXTENDED
+    }
+
     private DcMotor fl;
     private DcMotor fr;
     private DcMotor rl;
@@ -45,16 +50,16 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        rl = hardwareMap.get(DcMotor.class, "rl");
+        SlideState state = SlideState.RETRACTED;
+
+        fl = hardwareMap.get(DcMotor.class, "fl"); //HAS RIGHT SIDE DEADWHEEL
+        fr = hardwareMap.get(DcMotor.class, "fr"); //HAS REAR DEADWHEEL
+        rl = hardwareMap.get(DcMotor.class, "rl"); //HAS LEFT SIDE DEADWHEEL
         rr = hardwareMap.get(DcMotor.class, "rr");
         slide = hardwareMap.get(DcMotorEx.class, "slide");
         grabber = hardwareMap.get(Servo.class, "grabber");
         slideSensor = hardwareMap.get(TouchSensor.class, "slideSensor");
 
-        //fr.setDirection(DcMotor.Direction.REVERSE);
-        //rr.setDirection(DcMotor.Direction.REVERSE);
         slide.setDirection(DcMotor.Direction.REVERSE);
         grabber.scaleRange(0, 1);
 
@@ -82,68 +87,20 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
-            /*//left stick: translational motion
-            fl.setPower(gamepad1.left_stick_y);
-            fr.setPower(gamepad1.left_stick_y);
-            rl.setPower(gamepad1.left_stick_y);
-            rr.setPower(gamepad1.left_stick_y);
-
-            //left stick: rotation
-            fl.setPower(-gamepad1.left_stick_x);
-            fr.setPower(gamepad1.left_stick_x);
-            rl.setPower(-gamepad1.left_stick_x);
-            rr.setPower(gamepad1.left_stick_x);
-
-            //right stick: strafing
-            fl.setPower(-gamepad1.right_stick_x);
-            fr.setPower(-gamepad1.right_stick_x);
-            rl.setPower(gamepad1.right_stick_x);
-            rr.setPower(gamepad1.right_stick_x);
-
-            //diagonal strafing
-            if (gamepad1.left_stick_y > 0) {
-                if (gamepad1.right_stick_x < 0) {
-                    fl.setPower(0);
-                    fr.setPower(gamepad1.right_stick_x);
-                    rl.setPower(gamepad1.right_stick_x);
-                    rr.setPower(0);
-                } else if (gamepad1.right_stick_x > 0) {
-                    fl.setPower(gamepad1.right_stick_x);
-                    fr.setPower(0);
-                    rl.setPower(0);
-                    rr.setPower(gamepad1.right_stick_x);
-                }
-            } else if (gamepad1.right_stick_y < 0) {
-                if (gamepad1.right_stick_x < 0) {
-                    fl.setPower(0);
-                    fr.setPower(-gamepad1.right_stick_x);
-                    rl.setPower(-gamepad1.right_stick_x);
-                    rr.setPower(0);
-                } else if (gamepad1.right_stick_x > 0) {
-                    fl.setPower(-gamepad1.right_stick_x);
-                    fr.setPower(0);
-                    rl.setPower(0);
-                    rr.setPower(-gamepad1.right_stick_x);
-                }
-            }*/
-
-            double drive = -gamepad1.left_stick_x;
-            double strafe = -gamepad1.right_stick_x;
-            double twist = -gamepad1.left_stick_y;
-
-            double v1 = drive + strafe - twist;
-            double v2 = drive - strafe + twist;
-            double v3 = drive - strafe - twist;
-            double v4 = drive + strafe + twist;
-
-            fl.setPower(v1);
-            fr.setPower(v2);
-            rl.setPower(v3);
-            rr.setPower(v4);
 
             slide();
-
             grabber();
+
+            switch(state) {
+                case RETRACTED:
+                    fastMecanum();
+                    if (slide.getCurrentPosition() > 300) state = SlideState.EXTENDED;
+                    break;
+                case EXTENDED:
+                    slowMecanum();
+                    if (slide.getCurrentPosition() < 300) state = SlideState.RETRACTED;
+                    break;
+            }
 
             telemetry.addData("Front left power\t: ", fl.getPower());
             telemetry.addData("Front right power\t: ", fl.getPower());
@@ -244,9 +201,45 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
     private void grabber() {
         if (gamepad1.left_stick_button) {
-            grabber.setPosition(0.24);
+            grabber.setPosition(0.2);
         } else if (gamepad1.right_stick_button) {
             grabber.setPosition(0.45);
         }
+    }
+
+    private void fastMecanum() {
+        double drive = -gamepad1.left_stick_x;
+        double strafe = -gamepad1.right_stick_x;
+        double twist = -gamepad1.left_stick_y;
+
+        double v1 = drive + strafe - twist;
+        double v2 = drive - strafe + twist;
+        double v3 = drive - strafe - twist;
+        double v4 = drive + strafe + twist;
+
+        fl.setPower(v1 * 0.7);
+        fr.setPower(v2 * 0.7);
+        rl.setPower(v3 * 0.7);
+        rr.setPower(v4 * 0.7);
+    }
+
+    private void slowMecanum() {
+        //left stick: translational motion
+        fl.setPower(gamepad1.left_stick_y);
+        fr.setPower(-gamepad1.left_stick_y);
+        rl.setPower(gamepad1.left_stick_y);
+        rr.setPower(-gamepad1.left_stick_y);
+
+        //left stick: rotation
+        fl.setPower(-gamepad1.left_stick_x);
+        fr.setPower(-gamepad1.left_stick_x);
+        rl.setPower(-gamepad1.left_stick_x);
+        rr.setPower(-gamepad1.left_stick_x);
+
+        //right stick: strafing
+        fl.setPower(-gamepad1.right_stick_x);
+        fr.setPower(gamepad1.right_stick_x);
+        rl.setPower(gamepad1.right_stick_x);
+        rr.setPower(-gamepad1.right_stick_x);
     }
 }
