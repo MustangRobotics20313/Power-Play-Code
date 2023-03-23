@@ -53,6 +53,7 @@ public class AprilTagAutonomous extends LinearOpMode
     private Servo grabber;
 
     private static final double MOTOR_POWER = 0.5;
+    private static final int EXTRA_TIME = 350;
 
     private static final double FEET_PER_METER = 3.28084;
 
@@ -229,10 +230,10 @@ public class AprilTagAutonomous extends LinearOpMode
         fr.setPower(MOTOR_POWER);
         rl.setPower(MOTOR_POWER);
         rr.setPower(-MOTOR_POWER);
-        sleep(1100);
+        sleep(1100 + EXTRA_TIME);
 
         allPower(-MOTOR_POWER);
-        sleep(700);
+        sleep(900);
         allPower(0);
     }
 
