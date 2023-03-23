@@ -52,7 +52,7 @@ public class AprilTagAutonomous extends LinearOpMode
     private DcMotor slide;
     private Servo grabber;
 
-    private static final double MOTOR_POWER = 0.6;
+    private static final double MOTOR_POWER = 0.5;
 
     private static final double FEET_PER_METER = 3.28084;
 
@@ -203,9 +203,9 @@ public class AprilTagAutonomous extends LinearOpMode
 
     private void parkLeft() {
         fl.setPower(MOTOR_POWER);
-        fr.setPower(MOTOR_POWER);
+        fr.setPower(-MOTOR_POWER);
         rl.setPower(-MOTOR_POWER);
-        rr.setPower(-MOTOR_POWER);
+        rr.setPower(MOTOR_POWER);
         sleep(850);
 
         allPower(-MOTOR_POWER);
@@ -214,11 +214,11 @@ public class AprilTagAutonomous extends LinearOpMode
     }
 
     private void parkMiddle() {
-        fl.setPower(-MOTOR_POWER / 6.0);
-        fr.setPower(-MOTOR_POWER / 6.0);
-        rl.setPower(MOTOR_POWER / 6.0);
-        rr.setPower(MOTOR_POWER / 6.0);
-        sleep(100);
+        fl.setPower(-MOTOR_POWER);
+        fr.setPower(MOTOR_POWER);
+        rl.setPower(MOTOR_POWER);
+        rr.setPower(-MOTOR_POWER);
+        sleep(200);
         allPower(-MOTOR_POWER);
         sleep(900);
         allPower(0);
@@ -226,9 +226,9 @@ public class AprilTagAutonomous extends LinearOpMode
 
     private void parkRight() {
         fl.setPower(-MOTOR_POWER);
-        fr.setPower(-MOTOR_POWER);
+        fr.setPower(MOTOR_POWER);
         rl.setPower(MOTOR_POWER);
-        rr.setPower(MOTOR_POWER);
+        rr.setPower(-MOTOR_POWER);
         sleep(1100);
 
         allPower(-MOTOR_POWER);
