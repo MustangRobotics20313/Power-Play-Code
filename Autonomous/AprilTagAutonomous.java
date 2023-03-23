@@ -52,7 +52,8 @@ public class AprilTagAutonomous extends LinearOpMode
     private DcMotor slide;
     private Servo grabber;
 
-    private static final double MOTOR_POWER = 0.6;
+    private static final double MOTOR_POWER = 0.5;
+    private static final int EXTRA_TIME = 350;
 
     private static final double FEET_PER_METER = 3.28084;
 
@@ -203,9 +204,9 @@ public class AprilTagAutonomous extends LinearOpMode
 
     private void parkLeft() {
         fl.setPower(MOTOR_POWER);
-        fr.setPower(MOTOR_POWER);
+        fr.setPower(-MOTOR_POWER);
         rl.setPower(-MOTOR_POWER);
-        rr.setPower(-MOTOR_POWER);
+        rr.setPower(MOTOR_POWER);
         sleep(850);
 
         allPower(-MOTOR_POWER);
@@ -214,11 +215,19 @@ public class AprilTagAutonomous extends LinearOpMode
     }
 
     private void parkMiddle() {
+<<<<<<< HEAD
         fl.setPower(-MOTOR_POWER / 6.0);
         fr.setPower(-MOTOR_POWER / 6.0);
         rl.setPower(MOTOR_POWER / 6.0);
         rr.setPower(MOTOR_POWER / 6.0);
         sleep(300);
+=======
+        fl.setPower(-MOTOR_POWER);
+        fr.setPower(MOTOR_POWER);
+        rl.setPower(MOTOR_POWER);
+        rr.setPower(-MOTOR_POWER);
+        sleep(200);
+>>>>>>> 6426aa6e36bcb8a2d2b7e032bc7813c3cc214e24
         allPower(-MOTOR_POWER);
         sleep(900);
         allPower(0);
@@ -226,13 +235,13 @@ public class AprilTagAutonomous extends LinearOpMode
 
     private void parkRight() {
         fl.setPower(-MOTOR_POWER);
-        fr.setPower(-MOTOR_POWER);
+        fr.setPower(MOTOR_POWER);
         rl.setPower(MOTOR_POWER);
-        rr.setPower(MOTOR_POWER);
-        sleep(1100);
+        rr.setPower(-MOTOR_POWER);
+        sleep(1100 + EXTRA_TIME);
 
         allPower(-MOTOR_POWER);
-        sleep(700);
+        sleep(900);
         allPower(0);
     }
 

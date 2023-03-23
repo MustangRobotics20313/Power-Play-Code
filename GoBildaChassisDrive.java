@@ -67,6 +67,9 @@ public class GoBildaChassisDrive extends LinearOpMode {
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        fr.setDirection(DcMotor.Direction.REVERSE);
+        rr.setDirection(DcMotor.Direction.REVERSE);
+
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myImuParameters = new IMU.Parameters (
@@ -115,6 +118,9 @@ public class GoBildaChassisDrive extends LinearOpMode {
             telemetry.addData("Yaw\t:", robotOrientation.getYaw(AngleUnit.DEGREES));
             telemetry.addData("Pitch\t:", robotOrientation.getPitch(AngleUnit.DEGREES));
             telemetry.addData("Roll\t:", robotOrientation.getRoll(AngleUnit.DEGREES));
+
+            telemetry.addData("Left encoder\t:", fr.getCurrentPosition());
+            telemetry.addData("Right encoder\t:", fl.getCurrentPosition());
 
             telemetry.update();
 
@@ -208,9 +214,9 @@ public class GoBildaChassisDrive extends LinearOpMode {
     }
 
     private void fastMecanum() {
-        double drive = -gamepad1.left_stick_x;
+        double drive = gamepad1.left_stick_y;
         double strafe = -gamepad1.right_stick_x;
-        double twist = -gamepad1.left_stick_y;
+        double twist = gamepad1.left_stick_x;
 
         double v1 = drive + strafe - twist;
         double v2 = drive - strafe + twist;
@@ -226,15 +232,15 @@ public class GoBildaChassisDrive extends LinearOpMode {
     private void slowMecanum() {
         //left stick: translational motion
         fl.setPower(gamepad1.left_stick_y);
-        fr.setPower(-gamepad1.left_stick_y);
+        fr.setPower(gamepad1.left_stick_y);
         rl.setPower(gamepad1.left_stick_y);
-        rr.setPower(-gamepad1.left_stick_y);
+        rr.setPower(gamepad1.left_stick_y);
 
         //left stick: rotation
         fl.setPower(-gamepad1.left_stick_x);
-        fr.setPower(-gamepad1.left_stick_x);
+        fr.setPower(gamepad1.left_stick_x);
         rl.setPower(-gamepad1.left_stick_x);
-        rr.setPower(-gamepad1.left_stick_x);
+        rr.setPower(gamepad1.left_stick_x);
 
         //right stick: strafing
         fl.setPower(-gamepad1.right_stick_x);
