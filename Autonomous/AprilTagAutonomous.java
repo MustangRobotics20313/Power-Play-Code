@@ -218,7 +218,7 @@ public class AprilTagAutonomous extends LinearOpMode
         fr.setPower(-MOTOR_POWER / 6.0);
         rl.setPower(MOTOR_POWER / 6.0);
         rr.setPower(MOTOR_POWER / 6.0);
-        sleep(100);
+        sleep(300);
         allPower(-MOTOR_POWER);
         sleep(900);
         allPower(0);

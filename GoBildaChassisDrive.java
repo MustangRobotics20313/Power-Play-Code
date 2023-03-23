@@ -41,10 +41,10 @@ public class GoBildaChassisDrive extends LinearOpMode {
     private final int MIDDLE_POSITION = 2875;
     private final int HIGH_POSITION = 4000;
 
-    private final int STACK_FIVE_POSITION = 500;
-    private final int STACK_FOUR_POSITION = 390;
-    private final int STACK_THREE_POSITION = 230;
-    private final int STACK_TWO_POSITION = 90;
+    private final int STACK_FIVE_POSITION = 700;
+    private final int STACK_FOUR_POSITION = 540;
+    private final int STACK_THREE_POSITION = 400;
+    private final int STACK_TWO_POSITION = 240;
 
     private final double SLIDE_POWER = 0.9;
 
@@ -203,7 +203,7 @@ public class GoBildaChassisDrive extends LinearOpMode {
         if (gamepad1.left_stick_button) {
             grabber.setPosition(0.2);
         } else if (gamepad1.right_stick_button) {
-            grabber.setPosition(0.45);
+            grabber.setPosition(0.5);
         }
     }
 
