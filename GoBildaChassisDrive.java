@@ -39,7 +39,7 @@ public class GoBildaChassisDrive extends LinearOpMode {
     private final int RETRACTED_POSITION = 0;
     private final int LOW_POSITION = 1600;
     private final int MIDDLE_POSITION = 2875;
-    private final int HIGH_POSITION = 4000;
+    private final int HIGH_POSITION = 3875;
 
     private final int STACK_FIVE_POSITION = 700;
     private final int STACK_FOUR_POSITION = 540;
